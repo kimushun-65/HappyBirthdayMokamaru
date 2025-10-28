@@ -13,8 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Happy Birthday Moka",
-  description: "Happy Birthday Moka",
+  title: "Happy Birthday Moka 💖",
+  description: "Happy Birthday Moka - Special Birthday Page",
+  icons: {
+    icon: '/heart.svg',
+    apple: '/heart.svg',
+  },
 };
 
 export default function RootLayout({
