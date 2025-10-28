@@ -10,7 +10,13 @@ const ThreeScene = dynamic(() => import("@/components/ThreeScene"), {
 });
 
 export default function Home() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    // Initialize from sessionStorage
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('isAuthenticated') === 'true';
+    }
+    return false;
+  });
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [sparkles, setSparkles] = useState<Array<{ id: number; x: number; y: number }>>([]);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -126,14 +132,6 @@ export default function Home() {
     return () => audio.removeEventListener('ended', handleMusicEnd);
   }, []);
 
-  // Check if user is already authenticated
-  useEffect(() => {
-    const authStatus = sessionStorage.getItem('isAuthenticated');
-    if (authStatus === 'true') {
-      setIsAuthenticated(true);
-    }
-  }, []);
-
   const handleLogin = () => {
     sessionStorage.setItem('isAuthenticated', 'true');
     setIsAuthenticated(true);
@@ -176,12 +174,12 @@ export default function Home() {
 
       {/* Left side decorations */}
       <div className="absolute left-0 top-0 h-full w-1/4 pointer-events-none z-0">
-        <div className="absolute top-[10%] left-[10%] text-8xl animate-spin-slow">🎉</div>
-        <div className="absolute top-[25%] left-[15%] text-6xl animate-bounce" style={{ animationDuration: '2s' }}>🎈</div>
-        <div className="absolute top-[40%] left-[5%] text-7xl animate-pulse" style={{ animationDuration: '1.5s' }}>✨</div>
-        <div className="absolute top-[55%] left-[18%] text-9xl animate-bounce" style={{ animationDuration: '3s' }}>🎂</div>
-        <div className="absolute top-[70%] left-[8%] text-6xl animate-spin-slow">🎊</div>
-        <div className="absolute top-[85%] left-[12%] text-7xl animate-pulse" style={{ animationDuration: '2s' }}>🌟</div>
+        <div className="absolute top-[10%] left-[10%] text-4xl sm:text-6xl md:text-8xl animate-spin-slow">🎉</div>
+        <div className="absolute top-[25%] left-[15%] text-3xl sm:text-4xl md:text-6xl animate-bounce" style={{ animationDuration: '2s' }}>🎈</div>
+        <div className="absolute top-[40%] left-[5%] text-4xl sm:text-5xl md:text-7xl animate-pulse" style={{ animationDuration: '1.5s' }}>✨</div>
+        <div className="absolute top-[55%] left-[18%] text-5xl sm:text-7xl md:text-9xl animate-bounce" style={{ animationDuration: '3s' }}>🎂</div>
+        <div className="absolute top-[70%] left-[8%] text-3xl sm:text-4xl md:text-6xl animate-spin-slow">🎊</div>
+        <div className="absolute top-[85%] left-[12%] text-4xl sm:text-5xl md:text-7xl animate-pulse" style={{ animationDuration: '2s' }}>🌟</div>
 
         {/* Floating circles left */}
         {leftCircles.map((circle, i) => (
@@ -204,12 +202,12 @@ export default function Home() {
 
       {/* Right side decorations */}
       <div className="absolute right-0 top-0 h-full w-1/4 pointer-events-none z-0">
-        <div className="absolute top-[15%] right-[12%] text-8xl animate-spin-slow">🎁</div>
-        <div className="absolute top-[30%] right-[8%] text-7xl animate-bounce" style={{ animationDuration: '2.5s' }}>🎈</div>
-        <div className="absolute top-[45%] right-[15%] text-6xl animate-pulse" style={{ animationDuration: '1.8s' }}>💝</div>
-        <div className="absolute top-[60%] right-[10%] text-8xl animate-bounce" style={{ animationDuration: '3.5s' }}>🍰</div>
-        <div className="absolute top-[75%] right-[18%] text-7xl animate-spin-slow">🎪</div>
-        <div className="absolute top-[90%] right-[6%] text-9xl animate-pulse" style={{ animationDuration: '2.2s' }}>⭐</div>
+        <div className="absolute top-[15%] right-[12%] text-4xl sm:text-6xl md:text-8xl animate-spin-slow">🎁</div>
+        <div className="absolute top-[30%] right-[8%] text-4xl sm:text-5xl md:text-7xl animate-bounce" style={{ animationDuration: '2.5s' }}>🎈</div>
+        <div className="absolute top-[45%] right-[15%] text-3xl sm:text-4xl md:text-6xl animate-pulse" style={{ animationDuration: '1.8s' }}>💝</div>
+        <div className="absolute top-[60%] right-[10%] text-4xl sm:text-6xl md:text-8xl animate-bounce" style={{ animationDuration: '3.5s' }}>🍰</div>
+        <div className="absolute top-[75%] right-[18%] text-4xl sm:text-5xl md:text-7xl animate-spin-slow">🎪</div>
+        <div className="absolute top-[90%] right-[6%] text-5xl sm:text-7xl md:text-9xl animate-pulse" style={{ animationDuration: '2.2s' }}>⭐</div>
 
         {/* Floating circles right */}
         {rightCircles.map((circle, i) => (
@@ -250,19 +248,19 @@ export default function Home() {
       </div>
 
       {/* Text overlay at bottom 1/3 */}
-      <div className="absolute bottom-0 left-0 right-0 h-1/3 flex flex-col items-center justify-center z-20 pointer-events-none">
-        <h1 className="text-5xl md:text-8xl font-black text-center bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent animate-pulse drop-shadow-2xl [text-shadow:_0_0_30px_rgb(219_39_119_/_50%)]">
+      <div className="absolute bottom-0 left-0 right-0 h-1/3 flex flex-col items-center justify-center z-20 pointer-events-none px-4">
+        <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black text-center bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent animate-pulse drop-shadow-2xl [text-shadow:_0_0_30px_rgb(219_39_119_/_50%)] leading-tight">
           HAPPY BIRTHDAY
         </h1>
-        <h2 className="text-6xl md:text-9xl font-black text-center mt-2 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent animate-bounce drop-shadow-2xl [text-shadow:_0_0_40px_rgb(236_72_153_/_60%)]">
+        <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-black text-center mt-1 sm:mt-2 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent animate-bounce drop-shadow-2xl [text-shadow:_0_0_40px_rgb(236_72_153_/_60%)] leading-tight">
           MOKA
         </h2>
 
-        <div className="flex justify-center gap-4 mt-6">
+        <div className="flex justify-center gap-2 sm:gap-3 md:gap-4 mt-3 sm:mt-4 md:mt-6">
           {['🎉', '🎂', '🎈', '✨', '🎊'].map((emoji, i) => (
             <span
               key={i}
-              className="text-5xl animate-bounce"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl animate-bounce"
               style={{
                 animationDelay: `${i * 0.1}s`,
                 animationDuration: '1s',
@@ -277,15 +275,15 @@ export default function Home() {
       {/* Music player button */}
       <button
         onClick={toggleMusic}
-        className="fixed top-6 right-6 z-30 pointer-events-auto bg-pink-500 hover:bg-pink-600 text-white rounded-full p-4 shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95"
+        className="fixed top-4 right-4 sm:top-6 sm:right-6 z-30 pointer-events-auto bg-pink-500 hover:bg-pink-600 text-white rounded-full p-3 sm:p-4 shadow-2xl transition-all duration-300 active:scale-95"
         aria-label="Toggle music"
       >
         {isPlaying ? (
-          <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="currentColor" viewBox="0 0 24 24">
             <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
           </svg>
         ) : (
-          <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="currentColor" viewBox="0 0 24 24">
             <path d="M8 5v14l11-7z" />
           </svg>
         )}
