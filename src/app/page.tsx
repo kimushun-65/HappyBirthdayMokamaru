@@ -11,6 +11,7 @@ const ThreeScene = dynamic(() => import("@/components/ThreeScene"), {
 export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [sparkles, setSparkles] = useState<Array<{ id: number; x: number; y: number }>>([]);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const images = [
     "/S__58490910.jpg",
@@ -72,6 +73,18 @@ export default function Home() {
 
     return () => clearInterval(interval);
   }, []);
+
+  const toggleMusic = () => {
+    const audio = document.getElementById('birthday-music') as HTMLAudioElement;
+    if (audio) {
+      if (isPlaying) {
+        audio.pause();
+      } else {
+        audio.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
 
   return (
     <div className="relative flex h-screen flex-col items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 overflow-hidden animate-[gradient_8s_ease_infinite]">
@@ -189,6 +202,32 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+      {/* Music player button */}
+      <button
+        onClick={toggleMusic}
+        className="fixed top-6 right-6 z-30 pointer-events-auto bg-pink-500 hover:bg-pink-600 text-white rounded-full p-4 shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95"
+        aria-label="Toggle music"
+      >
+        {isPlaying ? (
+          <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+          </svg>
+        ) : (
+          <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        )}
+      </button>
+
+      {/* Audio element */}
+      <audio
+        id="birthday-music"
+        loop
+        preload="auto"
+      >
+        <source src="/ハッピーバースデー！ もかまる！  いつもその笑顔で 元気をありがとう！ 君が笑.mp3" type="audio/mpeg" />
+      </audio>
     </div>
   );
 }
