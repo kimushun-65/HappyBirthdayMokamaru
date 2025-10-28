@@ -14,9 +14,20 @@ export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
 
   const images = [
-    "/S__58490910.jpg",
-    "/S__58490909.jpg",
-    "/IMG_5913.jpeg"
+    "/image/S__58490910.jpg",
+    "/image/105.jpg",
+    "/image/IMG_5707.png",
+    "/image/IMG_5909.jpg",
+    "/image/IMG_5913.jpeg",
+    "/image/IMG_6032.png",
+    "/image/IMG_6033.png",
+    "/image/IMG_6034.png",
+    "/image/IMG_6035.png",
+    "/image/IMG_6262.jpg",
+    "/image/IMG_6440.png",
+    "/image/IMG_6443.png",
+    "/image/S__58490909.jpg",
+    "/image/IMG_6441.png"
   ];
 
   const leftCircles = useMemo(() => {
@@ -74,14 +85,44 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-advance images every 4 seconds
+  // Auto-advance images in sync with music (77 seconds / 14 images = 5.5 seconds per image)
   useEffect(() => {
+    if (!isPlaying) return;
+
     const slideInterval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % images.length);
-    }, 4000);
+      setCurrentImageIndex((prev) => {
+        const nextIndex = prev + 1;
+        // If we've completed all images, stop at first image
+        if (nextIndex >= images.length) {
+          const audio = document.getElementById('birthday-music') as HTMLAudioElement;
+          if (audio) {
+            audio.pause();
+            audio.currentTime = 0;
+          }
+          setIsPlaying(false);
+          return 0; // Return to first image
+        }
+        return nextIndex;
+      });
+    }, 5500); // 5.5 seconds per image (77 seconds / 14 images)
 
     return () => clearInterval(slideInterval);
-  }, [images.length]);
+  }, [images.length, isPlaying]);
+
+  // Handle music end event
+  useEffect(() => {
+    const audio = document.getElementById('birthday-music') as HTMLAudioElement;
+    if (!audio) return;
+
+    const handleMusicEnd = () => {
+      setIsPlaying(false);
+      setCurrentImageIndex(0);
+      audio.currentTime = 0;
+    };
+
+    audio.addEventListener('ended', handleMusicEnd);
+    return () => audio.removeEventListener('ended', handleMusicEnd);
+  }, []);
 
   const toggleMusic = () => {
     const audio = document.getElementById('birthday-music') as HTMLAudioElement;
@@ -233,7 +274,6 @@ export default function Home() {
       {/* Audio element */}
       <audio
         id="birthday-music"
-        loop
         preload="auto"
       >
         <source src="/ハッピーバースデー！ もかまる！  いつもその笑顔で 元気をありがとう！ 君が笑.mp3" type="audio/mpeg" />
