@@ -3,12 +3,14 @@
 import Image from "next/image";
 import { useState, Suspense, useEffect, useMemo } from "react";
 import dynamic from "next/dynamic";
+import LoginPage from "@/components/LoginPage";
 
 const ThreeScene = dynamic(() => import("@/components/ThreeScene"), {
   ssr: false,
 });
 
 export default function Home() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [sparkles, setSparkles] = useState<Array<{ id: number; x: number; y: number }>>([]);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -124,6 +126,19 @@ export default function Home() {
     return () => audio.removeEventListener('ended', handleMusicEnd);
   }, []);
 
+  // Check if user is already authenticated
+  useEffect(() => {
+    const authStatus = sessionStorage.getItem('isAuthenticated');
+    if (authStatus === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogin = () => {
+    sessionStorage.setItem('isAuthenticated', 'true');
+    setIsAuthenticated(true);
+  };
+
   const toggleMusic = () => {
     const audio = document.getElementById('birthday-music') as HTMLAudioElement;
     if (audio) {
@@ -135,6 +150,11 @@ export default function Home() {
       setIsPlaying(!isPlaying);
     }
   };
+
+  // Show login page if not authenticated
+  if (!isAuthenticated) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
 
   return (
     <div className="relative flex h-screen flex-col items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 overflow-hidden animate-[gradient_8s_ease_infinite]">
