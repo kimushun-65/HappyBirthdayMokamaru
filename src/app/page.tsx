@@ -74,6 +74,15 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  // Auto-advance images every 4 seconds
+  useEffect(() => {
+    const slideInterval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }, 4000);
+
+    return () => clearInterval(slideInterval);
+  }, [images.length]);
+
   const toggleMusic = () => {
     const audio = document.getElementById('birthday-music') as HTMLAudioElement;
     if (audio) {
@@ -166,10 +175,11 @@ export default function Home() {
       >
         <div className="relative w-full h-full flex items-center justify-center">
           <Image
+            key={currentImageIndex}
             src={images[currentImageIndex]}
             alt="Happy Birthday"
             fill
-            className="object-contain"
+            className="object-contain transition-all duration-1000 ease-in-out animate-[fadeIn_1s_ease-in-out]"
             priority
           />
           {currentImageIndex > 0 && (
