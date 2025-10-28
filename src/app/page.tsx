@@ -19,26 +19,38 @@ export default function Home() {
   ];
 
   const leftCircles = useMemo(() => {
+    const seed = 12345; // Fixed seed for consistency
+    const random = (index: number, offset: number) => {
+      const x = Math.sin(seed + index * 10 + offset) * 10000;
+      return x - Math.floor(x);
+    };
+
     return [...Array(8)].map((_, i) => ({
-      width: Math.random() * 60 + 40,
-      height: Math.random() * 60 + 40,
-      left: Math.random() * 80,
-      top: Math.random() * 100,
+      width: random(i, 0) * 60 + 40,
+      height: random(i, 1) * 60 + 40,
+      left: random(i, 2) * 80,
+      top: random(i, 3) * 100,
       color: ['#ff6b9d', '#6c5ce7', '#fdcb6e', '#fd79a8', '#a29bfe'][i % 5],
       delay: i * 0.3,
-      duration: 3 + Math.random() * 2,
+      duration: 3 + random(i, 4) * 2,
     }));
   }, []);
 
   const rightCircles = useMemo(() => {
+    const seed = 54321; // Different seed for right side
+    const random = (index: number, offset: number) => {
+      const x = Math.sin(seed + index * 10 + offset) * 10000;
+      return x - Math.floor(x);
+    };
+
     return [...Array(8)].map((_, i) => ({
-      width: Math.random() * 60 + 40,
-      height: Math.random() * 60 + 40,
-      right: Math.random() * 80,
-      top: Math.random() * 100,
+      width: random(i, 0) * 60 + 40,
+      height: random(i, 1) * 60 + 40,
+      right: random(i, 2) * 80,
+      top: random(i, 3) * 100,
       color: ['#ff9ff3', '#54a0ff', '#48dbfb', '#ff6348', '#ffa502'][i % 5],
       delay: i * 0.4,
-      duration: 3 + Math.random() * 2,
+      duration: 3 + random(i, 4) * 2,
     }));
   }, []);
 
