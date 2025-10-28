@@ -21,7 +21,7 @@ export default function Home() {
   const [sparkles, setSparkles] = useState<Array<{ id: number; x: number; y: number }>>([]);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const images = [
+  const images = useMemo(() => [
     "/image/S__58490910.jpg",
     "/image/105.jpg",
     "/image/IMG_5707.png",
@@ -36,7 +36,7 @@ export default function Home() {
     "/image/IMG_6443.png",
     "/image/S__58490909.jpg",
     "/image/IMG_6441.png"
-  ];
+  ], []);
 
   const leftCircles = useMemo(() => {
     const seed = 12345; // Fixed seed for consistency
@@ -117,6 +117,14 @@ export default function Home() {
     return () => clearInterval(slideInterval);
   }, [images.length, isPlaying]);
 
+  // Preload all images
+  useEffect(() => {
+    images.forEach((src) => {
+      const img = new window.Image();
+      img.src = src;
+    });
+  }, [images]);
+
   // Handle music end event
   useEffect(() => {
     const audio = document.getElementById('birthday-music') as HTMLAudioElement;
@@ -163,7 +171,7 @@ export default function Home() {
       {sparkles.map((sparkle) => (
         <div
           key={sparkle.id}
-          className="absolute w-4 h-4 bg-yellow-300 rounded-full animate-ping z-0"
+          className="absolute w-4 h-4 bg-yellow-300 rounded-full animate-ping z-20"
           style={{
             left: `${sparkle.x}%`,
             top: `${sparkle.y}%`,
@@ -173,7 +181,7 @@ export default function Home() {
       ))}
 
       {/* Left side decorations */}
-      <div className="absolute left-0 top-0 h-full w-1/4 pointer-events-none z-0">
+      <div className="absolute left-0 top-0 h-full w-1/4 pointer-events-none z-20">
         <div className="absolute top-[10%] left-[10%] text-4xl sm:text-6xl md:text-8xl animate-spin-slow">🎉</div>
         <div className="absolute top-[25%] left-[15%] text-3xl sm:text-4xl md:text-6xl animate-bounce" style={{ animationDuration: '2s' }}>🎈</div>
         <div className="absolute top-[40%] left-[5%] text-4xl sm:text-5xl md:text-7xl animate-pulse" style={{ animationDuration: '1.5s' }}>✨</div>
@@ -201,7 +209,7 @@ export default function Home() {
       </div>
 
       {/* Right side decorations */}
-      <div className="absolute right-0 top-0 h-full w-1/4 pointer-events-none z-0">
+      <div className="absolute right-0 top-0 h-full w-1/4 pointer-events-none z-20">
         <div className="absolute top-[15%] right-[12%] text-4xl sm:text-6xl md:text-8xl animate-spin-slow">🎁</div>
         <div className="absolute top-[30%] right-[8%] text-4xl sm:text-5xl md:text-7xl animate-bounce" style={{ animationDuration: '2.5s' }}>🎈</div>
         <div className="absolute top-[45%] right-[15%] text-3xl sm:text-4xl md:text-6xl animate-pulse" style={{ animationDuration: '1.8s' }}>💝</div>
@@ -229,7 +237,7 @@ export default function Home() {
       </div>
 
       <div
-        className="cursor-pointer absolute inset-0 flex items-center justify-center z-10"
+        className="cursor-pointer absolute inset-0 flex items-center justify-center z-0"
         onClick={() => setCurrentImageIndex((prev) => (prev + 1) % images.length)}
       >
         <div className="relative w-full h-full flex items-center justify-center">
@@ -238,13 +246,24 @@ export default function Home() {
             src={images[currentImageIndex]}
             alt="Happy Birthday"
             fill
-            className="object-contain transition-all duration-1000 ease-in-out animate-[fadeIn_1s_ease-in-out]"
+            className="object-contain transition-opacity duration-500 ease-in-out"
             priority
+            loading="eager"
+            quality={85}
           />
           {currentImageIndex > 0 && (
             <div className="absolute inset-0 bg-gradient-to-t from-pink-500/20 to-purple-500/20 animate-pulse pointer-events-none" />
           )}
         </div>
+
+        {/* Preload next image */}
+        {images[(currentImageIndex + 1) % images.length] && (
+          <link
+            rel="preload"
+            as="image"
+            href={images[(currentImageIndex + 1) % images.length]}
+          />
+        )}
       </div>
 
       {/* Text overlay at bottom 1/3 */}
