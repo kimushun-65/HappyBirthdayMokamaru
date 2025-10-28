@@ -6,7 +6,7 @@ import * as THREE from 'three'
 
 function Confetti() {
   const meshRef = useRef<THREE.InstancedMesh>(null!)
-  const count = 200
+  const count = 500
 
   const dummy = useMemo(() => new THREE.Object3D(), [])
 
@@ -85,13 +85,52 @@ function Balloons() {
 
   return (
     <group ref={groupRef}>
-      {[...Array(5)].map((_, i) => (
-        <mesh key={i} position={[(i - 2) * 3, 5, -5]}>
+      {[...Array(8)].map((_, i) => (
+        <mesh key={i} position={[(i - 3.5) * 2.5, 5, -5]}>
           <sphereGeometry args={[1, 32, 32]} />
           <meshStandardMaterial
-            color={['#ff6b9d', '#6c5ce7', '#fdcb6e', '#fd79a8', '#a29bfe'][i]}
-            metalness={0.3}
-            roughness={0.4}
+            color={['#ff6b9d', '#6c5ce7', '#fdcb6e', '#fd79a8', '#a29bfe', '#ff9ff3', '#54a0ff', '#48dbfb'][i]}
+            metalness={0.4}
+            roughness={0.3}
+          />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+function Stars() {
+  const groupRef = useRef<THREE.Group>(null!)
+  const count = 100
+
+  const positions = useMemo(() => {
+    const temp = []
+    for (let i = 0; i < count; i++) {
+      temp.push({
+        x: (Math.random() - 0.5) * 50,
+        y: (Math.random() - 0.5) * 50,
+        z: (Math.random() - 0.5) * 50,
+        scale: Math.random() * 0.5 + 0.2
+      })
+    }
+    return temp
+  }, [])
+
+  useFrame((state) => {
+    groupRef.current.rotation.y = state.clock.elapsedTime * 0.05
+  })
+
+  return (
+    <group ref={groupRef}>
+      {positions.map((pos, i) => (
+        <mesh key={i} position={[pos.x, pos.y, pos.z]} scale={pos.scale}>
+          <octahedronGeometry args={[0.3]} />
+          <meshStandardMaterial
+            color="#ffeb3b"
+            emissive="#ffeb3b"
+            emissiveIntensity={0.5}
+            metalness={0.8}
+            roughness={0.2}
           />
         </mesh>
       ))}
@@ -103,10 +142,12 @@ export default function ThreeScene() {
   return (
     <div className="fixed inset-0 pointer-events-none">
       <Canvas camera={{ position: [0, 0, 20], fov: 75 }}>
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} intensity={1} />
+        <ambientLight intensity={0.7} />
+        <pointLight position={[10, 10, 10]} intensity={1.5} />
+        <pointLight position={[-10, -10, -10]} intensity={0.8} color="#ff6b9d" />
         <Confetti />
         <Balloons />
+        <Stars />
       </Canvas>
     </div>
   )
